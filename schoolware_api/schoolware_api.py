@@ -52,6 +52,7 @@ class schoolware:
     def taken(self):
         self.check_if_valid()
         task_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true", cookies=self.cookie).json()["data"]
+        self.todo = []
 
         for taak in task_data:
             if(taak["TypePunt"] == 1000):
@@ -73,11 +74,12 @@ class schoolware:
                 "onderwerp": onderwerp,
                 "eind_time": eind_time
             })
-        print(self.todo)
+        return self.todo
 
 #punten
     def punten(self):
         punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
+        self.scores = []
         for vak in punten_data:
 
             for punt in vak["Beoordelingen"]:
@@ -110,7 +112,7 @@ class schoolware:
                     "pub_datum": publicatie_datum
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
-        print(self.scores)
+        return self.scores
 
 #agenda
     def agenda(self):
@@ -121,6 +123,7 @@ class schoolware:
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
         ####
         agenda_data = requests.get(f"https://kov.schoolware.be/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}T00:00:00&MinTot={start}T00:00:00", cookies=self.cookie).json()["data"]
+        self.rooster = []
         for agenda in agenda_data:
             datum = agenda["Van"].split(' ')[0]
             datum = datetime.strptime(datum, '%Y-%m-%d')
@@ -136,6 +139,7 @@ class schoolware:
                     "onderwerp": onderwerp,
                     "lokaal": lokaal
                 })
-        print(self.rooster)
+        return self.rooster
+
 
 
