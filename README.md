@@ -3,5 +3,6 @@
 A api for schoolware written in python
 
 # intall
-* ``` pip install schoolware-api ```
+* ``` pip3 install schoolware-api ```
+* ``` playwright install &&  playwright install-deps```
 

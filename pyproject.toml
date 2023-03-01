@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "schoolware_api"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="MB", email="schoolware_api@mb-server.com" },
 ]
@@ -16,7 +16,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-
+dependencies = [
+  'playwright==1.31.1',
+]
 [project.urls]
 "Homepage" = "https://github.com/Maarten-buelens/schoolware_api"
 "Bug Tracker" = "https://github.com/Maarten-buelens/schoolware_api/issues"
