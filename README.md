@@ -1,5 +1,5 @@
 # Schoolware-api
 A api for schoolware written in python
 
-#intall
+# intall
 * ``` pip install schoolware-api ```
