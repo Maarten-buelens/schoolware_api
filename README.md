@@ -2,9 +2,14 @@
 # Schoolware-api
 A api for schoolware written in python
 
+# capabilities
+* get agenda points
+* get scores
+* get todo items
+
 # intall
-* ``` pip3 install schoolware-api ```
-* ``` playwright install &&  playwright install-deps```
+* ```pip3 install schoolware-api```
+* ```playwright install &&  playwright install-deps```
 
 # example
 
