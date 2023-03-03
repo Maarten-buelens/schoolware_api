@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 setup(
     name='schoolware_api',
     packages=find_packages(include=['schoolware_api']),
-    version='0.0.5',
+    version='0.0.6',
     description='a schoolware api made in python',
     author='Me',
     license='MIT',
