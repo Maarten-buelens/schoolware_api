@@ -8,6 +8,10 @@ class schoolware:
 
     def __init__(self, config) -> None:
         self.config = config
+        try:
+            self.debug = config["debug"]
+        except:
+            self.debug = False
         self.domain = self.config["domain"]
         self.user = self.config["user"]
         self.password = self.config["password"]
@@ -18,7 +22,6 @@ class schoolware:
         self.todo = []
         self.scores = []
         
-
 #Token&cookie stuff
     def get_new_token(self):
         with sync_playwright() as p:
@@ -83,7 +86,6 @@ class schoolware:
         for vak in punten_data:
 
             for punt in vak["Beoordelingen"]:
-                #print(punt)
                 vak = punt["IngerichtVakNaamgebruiker"]
                 DW = punt["DagelijksWerkCode"]
                 totale_score = float(punt["BeoordelingMomentNoemer"])
@@ -115,31 +117,90 @@ class schoolware:
         return self.scores
 
 #agenda
-    def agenda(self):
+    def agenda(self, datum=""):
         #begin en einde week
         day = str(date.today())
         dt = datetime.strptime(day, '%Y-%m-%d')
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
+        if(self.debug):
+            print("#"*50)
+            print(f"start date: {start}")
+            print("#"*50)
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
         ####
-        agenda_data = requests.get(f"https://kov.schoolware.be/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}T00:00:00&MinTot={start}T00:00:00", cookies=self.cookie).json()["data"]
+        agenda_data = requests.get(f"https://kov.schoolware.be/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}", cookies=self.cookie).json()["data"]
         self.rooster = []
         for agenda in agenda_data:
-            datum = agenda["Van"].split(' ')[0]
-            datum = datetime.strptime(datum, '%Y-%m-%d')
-            start = datetime.strptime((str(start).split(' ')[0]), '%Y-%m-%d')
-            end = datetime.strptime((str(end).split(' ')[0]), '%Y-%m-%d')
-            if(start <= datum >= end):
-                vak = agenda["VakNaam"]
-                lokaal = agenda["LokaalCode"]
-                onderwerp = agenda["Commentaar"]
+            if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
+                # if(self.debug):
+                #     print("#"*50)
+                #     print(f"start filter date: {start}")
+                #     print(f"end filter date: {end}")
+                #     print("#"*50)
+                self.rooster.append(agenda)
 
-                self.rooster.append({
+        return self.filter_rooster(self.rooster, datum)
+
+    def filter_rooster(self, rooster, datum=""):
+        today = []
+        if(datum == ""):
+            datum = datetime.today()
+            if(self.debug):
+                datum = datetime.strptime("2023-03-06", '%Y-%m-%d')
+
+        datum = str(datum).split(' ')[0]
+        if(self.debug):
+            print("#"*50)
+            print(f"filter date: {datum}")
+            print("#"*50)
+        for agenda in rooster:
+            if(str(agenda['Van'].split(' ')[0]) == datum):
+                vak = agenda['VakNaam']
+                lokaal = agenda['LokaalCode']
+                titel = agenda['Titel']
+                uur = agenda['Van'].split(' ')[1]
+
+                today.append({
                     "vak": vak,
-                    "onderwerp": onderwerp,
-                    "lokaal": lokaal
+                    "lokaal": lokaal,
+                    "titel": titel,
+                    "uur": uur,
+                    "skip": False,
                 })
-        return self.rooster
+        today_filterd = []
 
+        for index,agenda in enumerate(today):
+            if(not agenda["skip"]):
+
+                if(index == (len(today)-1)):
+                    today_filterd.append(agenda)
+                    continue
+                elif(index == (len(today)-1)):
+                    continue
+
+                if(agenda["uur"] == today[index+1]["uur"]):
+                    today[index+1]["skip"] = True
+                    today_filterd.append(agenda)
+                else:
+                    today_filterd.append(agenda)
+
+
+
+
+
+        if(self.debug):
+            print("#"*50)
+            print(f"Today: {today}")
+            print(f"Today len: {len(today)}")
+            print("#"*50)
+            print(f"Today_filted: {today_filterd}")
+            print(f"Today_filterd len: {len(today_filterd)}")
+            print("#"*50)
+
+
+
+            
+        return today_filterd
+            
 
 
