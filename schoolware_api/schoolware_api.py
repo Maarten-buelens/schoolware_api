@@ -175,12 +175,14 @@ class schoolware:
                 if(index == (len(today)-1)):
                     today_filterd.append(agenda)
                     continue
-                elif(index == (len(today)-1)):
-                    continue
+
 
                 if(agenda["uur"] == today[index+1]["uur"]):
-                    today[index+1]["skip"] = True
-                    today_filterd.append(agenda)
+                    if(agenda["vak"] == agenda["titel"]):
+                        agenda["skip"] = True
+                    elif(today[index+1]["vak"] == today[index+1]["titel"]):
+                        today[index+1]["skip"] = True
+                        today_filterd.append(agenda)
                 else:
                     today_filterd.append(agenda)
 
