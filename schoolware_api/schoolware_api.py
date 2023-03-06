@@ -17,10 +17,11 @@ class schoolware:
         self.password = self.config["password"]
         self.token = ""
         self.cookie = ""
-        self.check_if_valid()
         self.rooster = []
         self.todo = []
         self.scores = []
+        print("getting startup token")
+        self.check_if_valid()
         
 #Token&cookie stuff
     def get_new_token(self):
