@@ -33,7 +33,7 @@ class schoolware:
             browser = p.chromium.launch()
             context = browser.new_context(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0")
             page = context.new_page()
-            page.goto("https://{}/webleerling/start.html#!fn=llagenda".format(self.domain))
+            page.goto(f"https://{self.domain}/webleerling/start.html#!fn=llagenda")
             page.locator('xpath=//*[@id="ext-comp-1014"]').click()
             page.get_by_role("textbox").fill(self.user)
             page.get_by_text("Next").click()
@@ -47,7 +47,7 @@ class schoolware:
             return self.token
     
     def check_if_valid(self):
-        r = requests.get("https://{}/webleerling/bin/server.fcgi/REST/AgendaPunt".format(self.domain), cookies=self.cookie)
+        r = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt", cookies=self.cookie)
         if (r.status_code != 200):
             if(r.status_code == 401):
                 self.get_new_token()
