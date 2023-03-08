@@ -1,17 +1,20 @@
 import requests
 from datetime import date, datetime, timedelta
-import json
 from playwright.sync_api import sync_playwright
-import time
 
 class schoolware:
 
     def __init__(self, config) -> None:
         self.config = config
-        try:
+        if("debug" in config):
             self.debug = config["debug"]
-        except:
+        else:
             self.debug = False
+
+        if("verbose" in config):
+            self.verbose = config["verbose"]
+        else:
+            self.verbose = False
         self.domain = self.config["domain"]
         self.user = self.config["user"]
         self.password = self.config["password"]
@@ -20,7 +23,8 @@ class schoolware:
         self.rooster = []
         self.todo = []
         self.scores = []
-        print("getting startup token")
+        if(self.verbose):
+            print("getting startup token")
         self.check_if_valid()
         
 #Token&cookie stuff
@@ -82,6 +86,7 @@ class schoolware:
 
 #punten
     def punten(self):
+        self.check_if_valid()
         punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
         self.scores = []
         for vak in punten_data:
@@ -119,6 +124,7 @@ class schoolware:
 
 #agenda
     def agenda(self, datum=""):
+        self.check_if_valid()
         #begin en einde week
         day = str(date.today())
         dt = datetime.strptime(day, '%Y-%m-%d')
