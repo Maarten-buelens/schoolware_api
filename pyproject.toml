@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "schoolware_api"
-version = "0.0.9"
+version = "0.1.2"
 authors = [
   { name="MB", email="schoolware_api@mb-server.com" },
 ]

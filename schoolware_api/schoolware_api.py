@@ -21,7 +21,7 @@ class schoolware:
         self.token = ""
         self.cookie = ""
         self.rooster = []
-        self.todo = []
+        self.todo_list = []
         self.scores = []
         if(self.verbose):
             print("getting startup token")
@@ -60,7 +60,7 @@ class schoolware:
     def todo(self):
         self.check_if_valid()
         task_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true", cookies=self.cookie).json()["data"]
-        self.todo = []
+        self.todo_list = []
 
         for taak in task_data:
             if(taak["TypePunt"] == 1000):
@@ -75,14 +75,14 @@ class schoolware:
             onderwerp= taak["Commentaar"]
             eind_time = taak["Tot"].split(' ')[0]
 
-            self.todo.append({
+            self.todo_list.append({
                 "soort": soort,
                 "vak": vak,
                 "titel": titel,
                 "onderwerp": onderwerp,
                 "eind_time": eind_time
             })
-        return self.todo
+        return self.todo_list
 
 #punten
     def punten(self):
