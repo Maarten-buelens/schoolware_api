@@ -16,8 +16,12 @@ A api for schoolware written in python
 ```
 from schoolware_api import schoolware_api
 
-config = {"domain":"","password":"","user":""}
+config = {"domain":"", "user":"", "password":""} #example domain: kov.schoolware.be user: name.lastname@leerling.kov.be password: password 
 
 schoolware = schoolware_api.schoolware(config)
-print(schoolware.taken())
+
+print(schoolware.taken())  # Returns all todo items
+print(schoolware.punten()) # Returns all scores this schoolyear
+print(schoolware.agenda()) # Returns agenda points today
+print(schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points for 2023-03-06
 ```
