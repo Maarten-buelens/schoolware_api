@@ -56,8 +56,8 @@ class schoolware:
         else:
             return True
 
-#taken
-    def taken(self):
+#todo
+    def todo(self):
         self.check_if_valid()
         task_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true", cookies=self.cookie).json()["data"]
         self.todo = []
