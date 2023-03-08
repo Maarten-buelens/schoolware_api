@@ -20,7 +20,7 @@ config = {"domain":"", "user":"", "password":""} #example domain: kov.schoolware
 
 schoolware = schoolware_api.schoolware(config)
 
-print(schoolware.taken())  # Returns all todo items
+print(schoolware.todo())  # Returns all todo items
 print(schoolware.punten()) # Returns all scores this schoolyear
 print(schoolware.agenda()) # Returns agenda points today
 print(schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points for 2023-03-06
