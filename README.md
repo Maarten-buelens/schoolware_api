@@ -7,7 +7,7 @@ A api for schoolware written in python
 * get scores
 * get todo items
 
-# intall
+# install
 * ```pip3 install schoolware-api```
 * ```playwright install &&  playwright install-deps```
 
