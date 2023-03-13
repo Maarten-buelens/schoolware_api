@@ -43,9 +43,9 @@ print(schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points fo
 ## Complete example
 ```python
 from schoolware_api import schoolware_api
-{"domain":"","password":"","user":"","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
+config = {"domain":"","password":"","user":"","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
 
 schoolware = schoolware_api.schoolware(config)
 
-same as other
+# same as other
 ```
