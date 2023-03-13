@@ -1,6 +1,6 @@
 
 # Schoolware-api
-A api for schoolware written in python
+An api for schoolware written in python
 
 # capabilities
 * get agenda points
@@ -10,8 +10,8 @@ A api for schoolware written in python
 
 # config
 * domain: domain name of schoolware
-* user: school microsaft email
-* password: school microsaft password
+* user: school microsoft email
+* password: school microsoft password
 * bg: background procces to keep token valid
 * bot_token: telegram bot token to enable telegram bot
 * chat_id: id to send messages to
