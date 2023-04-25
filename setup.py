@@ -7,5 +7,5 @@ setup(
     author='Maarten Buelens',
     license='MIT',
     install_requires=['requests==2.25.1', 'playwright==1.31.1'],
-    author_email="schoolware_api@mb-server.com",
+    author_email='schoolware_api@mb-server.com',
 )
