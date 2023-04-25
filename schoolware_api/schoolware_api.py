@@ -50,11 +50,7 @@ class schoolware:
 #Token&cookie stuff
     def get_new_token(self):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored("• Starting get token", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"get_token")
         ##########VERBOSE##########
 
         with sync_playwright() as p:
@@ -73,48 +69,36 @@ class schoolware:
                 self.cookie = dict(FPWebSession=self.token)
             browser.close()
             ##########VERBOSE##########
-            if(self.verbose):
-                print(colored("#"*50, "grey"))
-                end_time = time.time()
-                print(colored(f"• Done getting token time:{end_time - start_time}", "green"))
-                print(colored("#"*50, "grey"))
+            verbose_end(self,"get_token")
             ##########VERBOSE##########
             return self.token
     
     def check_if_valid(self):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored(f"• Starting check token", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"check_token")
         ##########VERBOSE##########
 
         r = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/myschoolwareaccount", cookies=self.cookie)
 
-        ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            end_time = time.time()
-            print(colored(f"• Done checking token time:{end_time - start_time}", "green"))
-            print(colored("#"*50, "grey"))
-        ##########VERBOSE##########
+
         if (r.status_code != 200):
             if(r.status_code == 401):
+                ##########VERBOSE##########
+                verbose_end(self,"check_token invalid")
+                ##########VERBOSE##########
                 self.get_new_token()
             else:
                 raise "error with token"
         else:
+            ##########VERBOSE##########
+            verbose_end(self,"check_token")
+            ##########VERBOSE##########
             return True
 
 #todo
     def todo(self):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored("• Starting todo", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"todo")
         ##########VERBOSE##########
 
         self.check_if_valid()
@@ -133,31 +117,26 @@ class schoolware:
             titel= taak["Titel"]
             onderwerp= taak["Commentaar"]
             eind_time = taak["Tot"].split(' ')[0]
+            dt = datetime.strptime(taak["Tot"].split(' ')[0], '%Y-%m-%d')
+            day = dt.strftime('%A')
 
             self.todo_list.append({
                 "soort": soort,
                 "vak": vak,
                 "titel": titel,
                 "onderwerp": onderwerp,
-                "eind_time": eind_time
+                "eind_time": eind_time,
+                "day": day
             })
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            end_time = time.time()
-            print(colored(f"• Done todo time:{end_time - start_time}", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_end(self,"todo")
         ##########VERBOSE##########
         return self.todo_list
 
 #punten
     def punten(self):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored("• Starting punten", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"punten")
         ##########VERBOSE##########
         self.check_if_valid()
         punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
@@ -176,6 +155,8 @@ class schoolware:
                 publicatie_datum = punt["BeoordelingMomentPublicatieDatum"]
                 datum = punt["BeoordelingMomentDatum"]
                 titel = punt["BeoordelingMomentOmschrijving"]
+                dt = datetime.strptime(punt["BeoordelingMomentDatum"].split(' ')[0], '%Y-%m-%d')
+                day = dt.strftime('%A')
                 if(punt["BeoordelingMomentType_"] == "bmtToets"):
                     soort = "toets"
                 else:
@@ -190,26 +171,19 @@ class schoolware:
                     "gew_sc": gewenste_score,
                     "score": behaalde_score,
                     "datum": datum,
-                    "pub_datum": publicatie_datum
+                    "pub_datum": publicatie_datum,
+                    "day": day
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            end_time = time.time()
-            print(colored(f"• Done punten time:{end_time - start_time}", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_end(self,"punten")
         ##########VERBOSE##########
         return self.scores
 
 #agenda
     def agenda(self, datum=""):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored("• Starting agenda", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"_agenda")
         ##########VERBOSE##########
         self.check_if_valid()
         #begin en einde week
@@ -228,28 +202,18 @@ class schoolware:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
                 self.rooster.append(agenda)
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            end_time = time.time()
-            print(colored(f"• Done agenda time:{end_time - start_time}", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_end(self,"agenda")
         ##########VERBOSE##########
         return self.filter_rooster(self.rooster, datum)
 
     def filter_rooster(self, rooster, datum=""):
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            start_time = time.time()
-            print(colored("• Starting filter_agenda", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_print(self,"filter_agenda")
         ##########VERBOSE##########
         today = []
         if(datum == ""):
             datum = datetime.today()
-
         datum = str(datum).split(' ')[0]
-
         for agenda in rooster:
             if(str(agenda['Van'].split(' ')[0]) == datum):
                 vak = agenda['VakNaam']
@@ -283,15 +247,13 @@ class schoolware:
                 else:
                     today_filterd.append(agenda)
         ##########VERBOSE##########
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            end_time = time.time()
-            print(colored(f"• Done filter-agenda time:{end_time - start_time}", "green"))
-            print(colored("#"*50, "grey"))
+        verbose_end(self,"filter-agenda")
         ##########VERBOSE##########
 
         return today_filterd
-            
+
+##########OTHER##########
+
 #bg procces
 def bg(self):
     from time import sleep
@@ -302,7 +264,7 @@ def bg(self):
         if(self.verbose):
             print(colored("background task: checking token","blue"))
         self.check_if_valid()
-
+#telegram bot
 def telegram_def(self):
     import telegram
     from time import sleep
@@ -321,7 +283,21 @@ def telegram_def(self):
             
             asyncio.run(telegram_send_msg(self, diff))
 
-
 async def telegram_send_msg(self, diff):
     async with self.bot:
         await self.bot.send_message(text=f'{diff} New point(s)', chat_id=self.config["chat_id"])
+
+##########VERBOSE##########
+def verbose_print(self,message):
+    if(self.verbose):
+        print(colored("#"*50, "grey"))
+        self.start_time = time.time()
+        print(colored(f"• starting {message}", "green"))
+        print(colored("#"*50, "grey"))
+def verbose_end(self,message):
+    if(self.verbose):
+        print(colored("#"*50, "grey"))
+        end_time = time.time()
+        print(colored(f"• Done {message} time:{end_time - self.start_time}", "green"))
+        print(colored("#"*50, "grey"))
+##########VERBOSE##########
