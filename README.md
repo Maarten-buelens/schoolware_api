@@ -8,6 +8,8 @@ An api for schoolware written in python
 * get todo items
 * send telegram message for new scores
 
+### only microsoft login supported for now
+
 ## Config
 | Key | Description |
 | --- | --- |
