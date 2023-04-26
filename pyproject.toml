@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "schoolware_api"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
   { name="MB", email="schoolware_api@mb-server.com" },
 ]
@@ -17,8 +17,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  'requests==2.25.1',
-  'playwright==1.31.1',
+  'requests>=2.25.1',
+  'playwright>=1.31.1',
+  'termcolor>=2.2.0'
 ]
 [project.urls]
 "Homepage" = "https://github.com/Maarten-buelens/schoolware_api"

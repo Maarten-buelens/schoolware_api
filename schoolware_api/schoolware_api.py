@@ -88,6 +88,7 @@ class schoolware:
                 ##########VERBOSE##########
                 self.get_new_token()
             else:
+                verbose_end(self,f"check_token error {r.status_code}")
                 raise "error with token"
         else:
             ##########VERBOSE##########
