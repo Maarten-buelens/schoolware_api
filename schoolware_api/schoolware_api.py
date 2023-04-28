@@ -1,15 +1,9 @@
-
-
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
 import time
 from termcolor import colored
 import threading
-
-
-
-
 class schoolware:
 
     def __init__(self, config) -> None:
