@@ -1,3 +1,5 @@
+
+
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
@@ -98,6 +100,11 @@ class schoolware:
 
 #todo
     def todo(self):
+        """gets all todo items from schoolware
+
+        Returns:
+            list: returns all todo items in a list
+        """
         ##########VERBOSE##########
         verbose_print(self,"todo")
         ##########VERBOSE##########
@@ -136,6 +143,11 @@ class schoolware:
 
 #punten
     def punten(self):
+        """Gets points from the whole year
+
+        Returns:
+            list: A list containing the points orderd by date
+        """
         ##########VERBOSE##########
         verbose_print(self,"punten")
         ##########VERBOSE##########
@@ -183,6 +195,14 @@ class schoolware:
 
 #agenda
     def agenda(self, datum=""):
+        """Gets all agenda points of a given date from schoolware
+
+        Args:
+            datum (str, optional): Date to get agenda for. Defaults to "".
+
+        Returns:
+            list: returns output from filter_agenda
+        """
         ##########VERBOSE##########
         verbose_print(self,"_agenda")
         ##########VERBOSE##########
@@ -208,6 +228,15 @@ class schoolware:
         return self.filter_rooster(self.rooster, datum)
 
     def filter_rooster(self, rooster, datum=""):
+        """Internal function to filter a agenda rooster of a given date
+
+        Args:
+            rooster (list): The agenda points to filter
+            datum (str, optional): The date to filter agenda points for. Defaults to "".
+
+        Returns:
+            list: Filters agenda points for a given date and points
+        """
         ##########VERBOSE##########
         verbose_print(self,"filter_agenda")
         ##########VERBOSE##########
@@ -257,6 +286,8 @@ class schoolware:
 
 #bg procces
 def bg(self):
+    """Function to keep token valid
+    """
     from time import sleep
     if(self.verbose):
         print(colored("background procces started","blue"))
@@ -267,6 +298,8 @@ def bg(self):
         self.check_if_valid()
 #telegram bot
 def telegram_def(self):
+    """The setup function for Telegram
+    """
     import telegram
     from time import sleep
     import asyncio
@@ -285,17 +318,32 @@ def telegram_def(self):
             asyncio.run(telegram_send_msg(self, diff))
 
 async def telegram_send_msg(self, diff):
+    """Function to send a telegram message to a set message-id
+
+    Args:
+        diff (int): the number to display in the message
+    """
     async with self.bot:
         await self.bot.send_message(text=f'{diff} New point(s)', chat_id=self.config["chat_id"])
 
 ##########VERBOSE##########
 def verbose_print(self,message):
+    """To print a message when verbose is set also times function
+
+    Args:
+        message (string): name of function to display
+    """
     if(self.verbose):
         print(colored("#"*50, "grey"))
         self.start_time = time.time()
         print(colored(f"• starting {message}", "green"))
         print(colored("#"*50, "grey"))
 def verbose_end(self,message):
+    """Ends verbose_print with done and the time for the function
+
+    Args:
+        message (string): name of function to display
+    """
     if(self.verbose):
         print(colored("#"*50, "grey"))
         end_time = time.time()
