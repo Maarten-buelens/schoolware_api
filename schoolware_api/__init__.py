@@ -1,3 +1,1 @@
-from .schoolware_api import schoolware
-
-
+from .schoolware_api import *
