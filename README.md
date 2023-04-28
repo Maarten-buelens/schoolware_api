@@ -22,7 +22,7 @@ An api for schoolware written in python
 | verbose | show a lot more info
 
 ## Install
-* `pip3 install schoolware_api termcolor --upgrade `
+* `pip3 install schoolware_api --upgrade `
 * `playwright install &&  playwright install-deps`
 
 ## optional
@@ -31,23 +31,23 @@ An api for schoolware written in python
 ## Simple example
 
 ```python
-from schoolware_api import schoolware_api
+from schoolware_api import schoolware
 
 config = {"domain":"", "user":"", "password":""} #example domain: kov.schoolware.be user: name.lastname@leerling.kov.be password: password 
 
-schoolware = schoolware_api.schoolware(config)
+Schoolware = schoolware(config)
 
-print(schoolware.todo())  # Returns all todo items
-print(schoolware.punten()) # Returns all scores this schoolyear
-print(schoolware.agenda()) # Returns agenda points today
-print(schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points for 2023-03-06
+print(Schoolware.todo())  # Returns all todo items
+print(Schoolware.punten()) # Returns all scores this schoolyear
+print(Schoolware.agenda()) # Returns agenda points today
+print(Schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points for 2023-03-06
 ```
 ## Complete example
 ```python
-from schoolware_api import schoolware_api
+from schoolware_api import schoolware
 config = {"domain":"","password":"","user":"","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
 
-schoolware = schoolware_api.schoolware(config)
+Schoolware = schoolware(config)
 
 # same as other
 ```

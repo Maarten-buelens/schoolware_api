@@ -7,10 +7,17 @@ import threading
 class schoolware:
 
     def __init__(self, config) -> None:
-        """Pass config file to init class
-
+        """Pass config dict to init class
         Args:
-            config (dict): The config file docs at https://github.com/Maarten-buelens/schoolware_api
+        | Key | Description |
+        | --- | --- |
+        | domain | domain name of schoolware
+        | user | school microsoft email
+        | password | school microsoft password
+        | bg | background procces to keep token valid
+        | bot_token | telegram bot token to enable telegram bot
+        | chat_id | id to send messages to
+        | verbose | show a lot more info
         """
         self.config = config
         if("debug" in config):
