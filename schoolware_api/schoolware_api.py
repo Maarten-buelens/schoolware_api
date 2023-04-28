@@ -13,6 +13,11 @@ import threading
 class schoolware:
 
     def __init__(self, config) -> None:
+        """Pass config file to init class
+
+        Args:
+            config (dict): The config file docs at https://github.com/Maarten-buelens/schoolware_api
+        """
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
