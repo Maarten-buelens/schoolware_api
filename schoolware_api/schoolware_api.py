@@ -109,7 +109,7 @@ class schoolware:
         """gets all todo items from schoolware
 
         Returns:
-            list: returns all todo items in a list
+            list: returns all todo items in a list ordered by descending date
         """
         ##########VERBOSE##########
         verbose_print(self,"todo")
@@ -152,7 +152,7 @@ class schoolware:
         """Gets points from the whole year
 
         Returns:
-            list: A list containing the points orderd by date
+            list: A list containing the points orderd by descending date
         """
         ##########VERBOSE##########
         verbose_print(self,"punten")
@@ -176,6 +176,9 @@ class schoolware:
                 titel = punt["BeoordelingMomentOmschrijving"]
                 dt = datetime.strptime(punt["BeoordelingMomentDatum"].split(' ')[0], '%Y-%m-%d')
                 day = dt.strftime('%A')
+
+                pub_dt = datetime.strptime(punt["BeoordelingMomentPublicatieDatum"].split(' ')[0], '%Y-%m-%d')
+                pub_day = pub_dt.strftime('%A')
                 if(punt["BeoordelingMomentType_"] == "bmtToets"):
                     soort = "toets"
                 else:
@@ -191,7 +194,8 @@ class schoolware:
                     "score": behaalde_score,
                     "datum": datum,
                     "pub_datum": publicatie_datum,
-                    "day": day
+                    "day": day,
+                    "pub_day": pub_day,
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
@@ -316,21 +320,28 @@ def telegram_def(self):
         sleep(5*60)
         if(self.verbose):
             print(colored("telegram checking","blue"))
-        num_now = len(self.punten())
+        scores_now = self.punten()
+        num_now = len(scores_now)
         if(self.num_points < num_now):
+            diff_list = list(set(scores_now) - set(self.scores))
             diff = num_now - self.num_points
             self.num_points = num_now
+            scores_now = self.scores
             
-            asyncio.run(telegram_send_msg(self, diff))
+            msg = f"{diff} New points for:%0A"
+            for item in diff_list:
+                msg = msg + f"{item['vak']}%0A"
 
-async def telegram_send_msg(self, diff):
+            asyncio.run(telegram_send_msg(self, msg))
+
+async def telegram_send_msg(self, msg):
     """Function to send a telegram message to a set message-id
 
     Args:
-        diff (int): the number to display in the message
+        msg (string): the message to send in telegram msg
     """
     async with self.bot:
-        await self.bot.send_message(text=f'{diff} New point(s)', chat_id=self.config["chat_id"])
+        await self.bot.send_message(text=msg, chat_id=self.config["chat_id"])
 
 ##########VERBOSE##########
 def verbose_print(self,message):
