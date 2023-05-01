@@ -334,6 +334,10 @@ def telegram_def(self):
 
             asyncio.run(telegram_send_msg(self, msg))
 
+def telegram_manual_send(self, msg):
+    import asyncio
+    asyncio.run(telegram_send_msg(self, msg))
+
 async def telegram_send_msg(self, msg):
     """Function to send a telegram message to a set message-id
 
