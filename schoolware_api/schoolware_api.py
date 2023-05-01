@@ -340,8 +340,9 @@ def telegram_def(self):
             msg = f"{diff} New points for:\n"
             for item in diff_list:
                 msg = msg + f"{item['vak']}\n"
-
+            verbose_print(message=f"telegram send msg msg={msg}")
             asyncio.run(telegram_send_msg(self, msg))
+            verbose_end(message="telegram send")
 
 async def telegram_send_msg(self, msg):
     """Function to send a telegram message to a set message-id
