@@ -291,6 +291,15 @@ class schoolware:
         ##########VERBOSE##########
 
         return today_filterd
+    
+    def telegram_manual_send(self, msg):
+        """Manualy send a telegram message
+
+        Args:
+            msg (String): Message to send
+        """
+        import asyncio
+        asyncio.run(telegram_send_msg(self, msg))
 
 ##########OTHER##########
 
@@ -333,15 +342,6 @@ def telegram_def(self):
                 msg = msg + f"{item['vak']}%0A"
 
             asyncio.run(telegram_send_msg(self, msg))
-
-def telegram_manual_send(self, msg):
-    """Manualy send a telegram message
-
-    Args:
-        msg (String): Message to send
-    """
-    import asyncio
-    asyncio.run(telegram_send_msg(self, msg))
 
 async def telegram_send_msg(self, msg):
     """Function to send a telegram message to a set message-id
