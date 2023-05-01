@@ -313,8 +313,8 @@ def telegram_def(self):
     import telegram
     from time import sleep
     import asyncio
-    if(self.verbose):
-        self.bot = telegram.Bot(self.config["bot_token"])
+    
+    self.bot = telegram.Bot(self.config["bot_token"])
     print(colored("telegram started","blue"))
     while True:
         sleep(5*60)
