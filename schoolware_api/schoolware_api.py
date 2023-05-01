@@ -332,14 +332,14 @@ def telegram_def(self):
         scores_now = self.punten()
         num_now = len(scores_now)
         if(self.num_points < num_now):
-            diff_list = list(set(scores_now) - set(self.scores))
+            diff_list = [i for i in scores_now if i not in self.scores]
             diff = num_now - self.num_points
             self.num_points = num_now
             scores_now = self.scores
             
-            msg = f"{diff} New points for:%0A"
+            msg = f"{diff} New points for:\n"
             for item in diff_list:
-                msg = msg + f"{item['vak']}%0A"
+                msg = msg + f"{item['vak']}\n"
 
             asyncio.run(telegram_send_msg(self, msg))
 
