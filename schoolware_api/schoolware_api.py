@@ -331,11 +331,11 @@ def telegram_def(self):
             print(colored("telegram checking","blue"))
         scores_now = self.punten()
         num_now = len(scores_now)
-        if(self.num_points < num_now):
-            diff_list = [i for i in scores_now if i not in self.scores]
-            diff = num_now - self.num_points
-            self.num_points = num_now
-            scores_now = self.scores
+        if(num_prev < num_now):
+            diff_list = [i for i in scores_now if i not in scores_prev]
+            diff = num_now - num_prev
+            num_prev = num_now
+            scores_prev = scores_now
             
             msg = f"{diff} New points for:\n"
             for item in diff_list:
