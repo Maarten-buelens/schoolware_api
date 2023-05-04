@@ -50,10 +50,12 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
+        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
         self.num_points = len(self.punten())
+        self.scores_prev = self.scores
         
 #Token&cookie stuff
     def get_new_token(self):
@@ -214,7 +216,7 @@ class schoolware:
             list: returns output from filter_agenda
         """
         ##########VERBOSE##########
-        verbose_print(self,"_agenda")
+        verbose_print(self,"agenda")
         ##########VERBOSE##########
         self.check_if_valid()
         #begin en einde week
