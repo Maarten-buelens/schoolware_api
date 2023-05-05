@@ -48,7 +48,7 @@ class schoolware:
             self.bg_p.start()
 
         if("bot_token" in config):
-            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(self,))
+            self.telegram_bg = threading.Thread(target=self.telegram_def, args=())
             self.telegram_bg.start()
             
         self.domain = self.config["domain"]
