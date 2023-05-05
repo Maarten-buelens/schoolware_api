@@ -46,6 +46,7 @@ class schoolware:
             self.bg_p = threading.Thread(target=self.bg, args=(0,))
             print("start bg")
             self.bg_p.start()
+            print("bg started")
 
         if("bot_token" in config):
             self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
