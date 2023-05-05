@@ -21,7 +21,7 @@ class schoolware:
         | chat_id | id to send messages to
         | verbose | show a lot more info
         """
-        verbose_print(message="starting schoolware_api",level="info")
+        verbose_print(self , message="starting schoolware_api",level="info")
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
