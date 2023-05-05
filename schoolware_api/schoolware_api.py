@@ -21,7 +21,7 @@ class schoolware:
         | chat_id | id to send messages to
         | verbose | show a lot more info
         """
-        verbose_print(self , message="starting schoolware_api",level="info")
+#        verbose_print(self , message="starting schoolware_api",level="info")
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
@@ -53,7 +53,7 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
-        
+	verbose_print(self , message="starting schoolware_api",level="info")        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
