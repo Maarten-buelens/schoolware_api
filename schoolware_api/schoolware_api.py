@@ -337,6 +337,7 @@ def telegram_def(self):
     self.bot = telegram.Bot(self.config["bot_token"])
     print(colored("telegram started","blue"))
     num_prev = len(self.scores)
+    scores_prev = self.scores
     while True:
         sleep(5*60)
         if(self.verbose):
