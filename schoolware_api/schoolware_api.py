@@ -31,12 +31,12 @@ class schoolware:
         if("verbose" in config):
             self.verbose = config["verbose"]
             if(self.verbose):
-                logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
+                logging.basicConfig(format='[%(level)s] %(asctime)s - %(message)s', level=logging.DEBUG)
             else:
-                logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+                logging.basicConfig(format='[%(level)s] %(asctime)s - %(message)s', level=logging.INFO)
         else:
             self.verbose = False
-            logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+            logging.basicConfig(format='[%(level)s] %(asctime)s - %(message)s', level=logging.INFO)
         if("bg" in config):
             self.bg = config["bg"]
         else:
@@ -336,10 +336,11 @@ def telegram_def(self):
     
     self.bot = telegram.Bot(self.config["bot_token"])
     print(colored("telegram started","blue"))
+    num_prev = len(self.scores)
     while True:
         sleep(5*60)
         if(self.verbose):
-            print(colored("telegram checking","blue"))
+            verbose_print(message=f"telegram checking", level="debug")
         scores_now = self.punten()
         num_now = len(scores_now)
         if(num_prev < num_now):
