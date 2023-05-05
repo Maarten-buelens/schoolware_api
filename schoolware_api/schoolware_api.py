@@ -30,10 +30,13 @@ class schoolware:
             self.verbose = False
         if("verbose" in config):
             self.verbose = config["verbose"]
-            logging.basicConfig(level=logging.DEBUG)
+            if(self.verbose):
+                logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
+            else:
+                logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
         else:
             self.verbose = False
-            logging.basicConfig(level=logging.INFO)
+            logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
         if("bg" in config):
             self.bg = config["bg"]
         else:
