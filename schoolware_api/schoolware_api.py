@@ -43,7 +43,7 @@ class schoolware:
             self.bg = False
         
         if(self.bg):
-            self.bg_p = threading.Thread(target=self.bg, args=(self,))
+            self.bg_p = threading.Thread(target=self.bg)
             print("start bg")
             self.bg_p.start()
 
