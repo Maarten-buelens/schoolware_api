@@ -362,7 +362,7 @@ class schoolware:
                 for item in diff_list:
                     msg = msg + f"{item['vak']}\n"
                 self.verbose_print(message=f"telegram send msg msg={msg}", level=1)
-                asyncio.run(self.telegram_send_msg(self, msg))
+                asyncio.run(self.telegram_send_msg(msg))
 
     async def telegram_send_msg(self, msg):
         """Function to send a telegram message to a set message-id
