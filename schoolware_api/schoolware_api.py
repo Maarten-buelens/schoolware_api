@@ -311,7 +311,7 @@ class schoolware:
             msg (String): Message to send
         """
         import asyncio
-        asyncio.run(self.telegram_send_msg(self, msg))
+        asyncio.run(self.telegram_send_msg(msg))
 
     ##########OTHER##########
 
