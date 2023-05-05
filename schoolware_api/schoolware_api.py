@@ -21,7 +21,8 @@ class schoolware:
         | chat_id | id to send messages to
         | verbose | show a lot more info
         """
-#        verbose_print(self , message="starting schoolware_api",level="info")
+
+        logging.basicConfig(level=logging.DEBUG)
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
@@ -53,7 +54,7 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
-        verbose_print(self , message="starting schoolware_api",level="info")        
+        verbose_print(self , message="starting schoolware_api",level=1)        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
@@ -358,7 +359,7 @@ async def telegram_send_msg(self, msg):
         await self.bot.send_message(text=msg, chat_id=self.config["chat_id"])
 
 ##########VERBOSE##########
-def verbose_print(self,message, level="debug"):
+def verbose_print(self,message, level=0):
     """To print a message when verbose is set also times function
 
     Args:
@@ -367,7 +368,7 @@ def verbose_print(self,message, level="debug"):
     if(self.verbose):
         logging.debug(f"starting {message}")
 
-    if(level == "info"):
+    if(level == 1):
         logging.info(f"{message}")
 
 def verbose_end(self,message):
