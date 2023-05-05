@@ -43,12 +43,12 @@ class schoolware:
             self.bg = False
         
         if(self.bg):
-            self.bg_p = threading.Thread(target=self.bg)
+            self.bg_p = threading.Thread(target=self.bg, args=(0,))
             print("start bg")
             self.bg_p.start()
 
         if("bot_token" in config):
-            self.telegram_bg = threading.Thread(target=self.telegram_def)
+            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
             self.telegram_bg.start()
             
         self.domain = self.config["domain"]
@@ -315,7 +315,7 @@ class schoolware:
     ##########OTHER##########
 
     #bg procces
-    def bg(self):
+    def bg(self, none):
         """Function to keep token valid
         """
         from time import sleep
@@ -327,7 +327,7 @@ class schoolware:
                 print(colored("background task: checking token","blue"))
             self.check_if_valid()
     #telegram bot
-    def telegram_def(self):
+    def telegram_def(self, none):
         """The setup function for Telegram
         """
         import telegram
