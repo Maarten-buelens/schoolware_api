@@ -43,12 +43,12 @@ class schoolware:
             self.bg = False
         
         if(self.bg):
-            self.bg_p = threading.Thread(target=bg, args=(self,))
+            self.bg_p = threading.Thread(target=self.bg, args=(self,))
             print("start bg")
             self.bg_p.start()
 
         if("bot_token" in config):
-            self.telegram_bg = threading.Thread(target=telegram_def, args=(self,))
+            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(self,))
             self.telegram_bg.start()
             
         self.domain = self.config["domain"]
@@ -59,7 +59,7 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
-        verbose_print(self , message="starting schoolware_api",level=1)        
+        self.verbose_print(self , message="starting schoolware_api",level=1)        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
@@ -69,7 +69,7 @@ class schoolware:
 #Token&cookie stuff
     def get_new_token(self):
         ##########VERBOSE##########
-        verbose_print(self,"get_token")
+        self.verbose_print(self,"get_token")
         ##########VERBOSE##########
 
         with sync_playwright() as p:
@@ -88,13 +88,13 @@ class schoolware:
                 self.cookie = dict(FPWebSession=self.token)
             browser.close()
             ##########VERBOSE##########
-            verbose_end(self,"get_token")
+            self.verbose_end(self,"get_token")
             ##########VERBOSE##########
             return self.token
     
     def check_if_valid(self):
         ##########VERBOSE##########
-        verbose_print(self,"check_token")
+        self.verbose_print(self,"check_token")
         ##########VERBOSE##########
 
         r = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/myschoolwareaccount", cookies=self.cookie)
@@ -103,15 +103,15 @@ class schoolware:
         if (r.status_code != 200):
             if(r.status_code == 401):
                 ##########VERBOSE##########
-                verbose_end(self,"check_token invalid")
+                self.verbose_end(self,"check_token invalid")
                 ##########VERBOSE##########
                 self.get_new_token()
             else:
-                verbose_end(self,f"check_token error {r.status_code}")
+                self.verbose_end(self,f"check_token error {r.status_code}")
                 raise "error with token"
         else:
             ##########VERBOSE##########
-            verbose_end(self,"check_token")
+            self.verbose_end(self,"check_token")
             ##########VERBOSE##########
             return True
 
@@ -123,7 +123,7 @@ class schoolware:
             list: returns all todo items in a list ordered by descending date
         """
         ##########VERBOSE##########
-        verbose_print(self,"todo")
+        self.verbose_print(self,"todo")
         ##########VERBOSE##########
 
         self.check_if_valid()
@@ -154,7 +154,7 @@ class schoolware:
                 "day": day
             })
         ##########VERBOSE##########
-        verbose_end(self,"todo")
+        self.verbose_end(self,"todo")
         ##########VERBOSE##########
         return self.todo_list
 
@@ -166,7 +166,7 @@ class schoolware:
             list: A list containing the points orderd by descending date
         """
         ##########VERBOSE##########
-        verbose_print(self,"punten")
+        self.verbose_print(self,"punten")
         ##########VERBOSE##########
         self.check_if_valid()
         punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
@@ -210,7 +210,7 @@ class schoolware:
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
-        verbose_end(self,"punten")
+        self.verbose_end(self,"punten")
         ##########VERBOSE##########
         return self.scores
 
@@ -225,7 +225,7 @@ class schoolware:
             list: returns output from filter_agenda
         """
         ##########VERBOSE##########
-        verbose_print(self,"agenda")
+        self.verbose_print(self,"agenda")
         ##########VERBOSE##########
         self.check_if_valid()
         #begin en einde week
@@ -244,7 +244,7 @@ class schoolware:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
                 self.rooster.append(agenda)
         ##########VERBOSE##########
-        verbose_end(self,"agenda")
+        self.verbose_end(self,"agenda")
         ##########VERBOSE##########
         return self.filter_rooster(self.rooster, datum)
 
@@ -259,7 +259,7 @@ class schoolware:
             list: Filters agenda points for a given date and points
         """
         ##########VERBOSE##########
-        verbose_print(self,"filter_agenda")
+        self.verbose_print(self,"filter_agenda")
         ##########VERBOSE##########
         today = []
         if(datum == ""):
@@ -298,7 +298,7 @@ class schoolware:
                 else:
                     today_filterd.append(agenda)
         ##########VERBOSE##########
-        verbose_end(self,"filter-agenda")
+        self.verbose_end(self,"filter-agenda")
         ##########VERBOSE##########
 
         return today_filterd
@@ -310,7 +310,7 @@ class schoolware:
             msg (String): Message to send
         """
         import asyncio
-        asyncio.run(telegram_send_msg(self, msg))
+        asyncio.run(self.telegram_send_msg(self, msg))
 
     ##########OTHER##########
 
@@ -341,8 +341,8 @@ class schoolware:
         while True:
             sleep(5*60)
             if(self.verbose):
-                verbose_print(message=f"telegram checking")
-            telegram_point_diff(self)
+                self.verbose_print(message=f"telegram checking")
+            self.telegram_point_diff(self)
 
 
 
@@ -360,8 +360,8 @@ class schoolware:
                 msg = f"{diff} New points for:\n"
                 for item in diff_list:
                     msg = msg + f"{item['vak']}\n"
-                verbose_print(message=f"telegram send msg msg={msg}", level=1)
-                asyncio.run(telegram_send_msg(self, msg))
+                self.verbose_print(message=f"telegram send msg msg={msg}", level=1)
+                asyncio.run(self.telegram_send_msg(self, msg))
 
     async def telegram_send_msg(self, msg):
         """Function to send a telegram message to a set message-id
@@ -386,7 +386,7 @@ class schoolware:
             logging.info(f"{message}")
 
     def verbose_end(self,message):
-        """Ends verbose_print with done and the time for the function
+        """Ends self.verbose_print with done and the time for the function
 
         Args:
             message (string): name of function to display
