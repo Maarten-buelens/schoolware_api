@@ -22,7 +22,7 @@ class schoolware:
         | verbose | show a lot more info
         """
 
-        logging.basicConfig(level=logging.DEBUG)
+        
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
@@ -30,8 +30,10 @@ class schoolware:
             self.verbose = False
         if("verbose" in config):
             self.verbose = config["verbose"]
+            logging.basicConfig(level=logging.DEBUG)
         else:
             self.verbose = False
+            logging.basicConfig(level=logging.INFO)
         if("bg" in config):
             self.bg = config["bg"]
         else:
