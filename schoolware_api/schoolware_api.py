@@ -342,7 +342,7 @@ class schoolware:
             sleep(5*60)
             if(self.verbose):
                 self.verbose_print(message=f"telegram checking")
-            self.telegram_point_diff(self)
+            self.telegram_point_diff()
 
 
 
