@@ -59,7 +59,7 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
-        self.verbose_print(self , message="starting schoolware_api",level=1)        
+        self.verbose_print(message="starting schoolware_api",level=1)        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
@@ -69,7 +69,7 @@ class schoolware:
 #Token&cookie stuff
     def get_new_token(self):
         ##########VERBOSE##########
-        self.verbose_print(self,"get_token")
+        self.verbose_print("get_token")
         ##########VERBOSE##########
 
         with sync_playwright() as p:
@@ -88,13 +88,13 @@ class schoolware:
                 self.cookie = dict(FPWebSession=self.token)
             browser.close()
             ##########VERBOSE##########
-            self.verbose_end(self,"get_token")
+            self.verbose_end("get_token")
             ##########VERBOSE##########
             return self.token
     
     def check_if_valid(self):
         ##########VERBOSE##########
-        self.verbose_print(self,"check_token")
+        self.verbose_print("check_token")
         ##########VERBOSE##########
 
         r = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/myschoolwareaccount", cookies=self.cookie)
@@ -103,15 +103,15 @@ class schoolware:
         if (r.status_code != 200):
             if(r.status_code == 401):
                 ##########VERBOSE##########
-                self.verbose_end(self,"check_token invalid")
+                self.verbose_end("check_token invalid")
                 ##########VERBOSE##########
                 self.get_new_token()
             else:
-                self.verbose_end(self,f"check_token error {r.status_code}")
+                self.verbose_end(f"check_token error {r.status_code}")
                 raise "error with token"
         else:
             ##########VERBOSE##########
-            self.verbose_end(self,"check_token")
+            self.verbose_end("check_token")
             ##########VERBOSE##########
             return True
 
@@ -123,7 +123,7 @@ class schoolware:
             list: returns all todo items in a list ordered by descending date
         """
         ##########VERBOSE##########
-        self.verbose_print(self,"todo")
+        self.verbose_print("todo")
         ##########VERBOSE##########
 
         self.check_if_valid()
@@ -154,7 +154,7 @@ class schoolware:
                 "day": day
             })
         ##########VERBOSE##########
-        self.verbose_end(self,"todo")
+        self.verbose_end("todo")
         ##########VERBOSE##########
         return self.todo_list
 
@@ -166,7 +166,7 @@ class schoolware:
             list: A list containing the points orderd by descending date
         """
         ##########VERBOSE##########
-        self.verbose_print(self,"punten")
+        self.verbose_print("punten")
         ##########VERBOSE##########
         self.check_if_valid()
         punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
@@ -210,7 +210,7 @@ class schoolware:
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
-        self.verbose_end(self,"punten")
+        self.verbose_end("punten")
         ##########VERBOSE##########
         return self.scores
 
@@ -225,7 +225,7 @@ class schoolware:
             list: returns output from filter_agenda
         """
         ##########VERBOSE##########
-        self.verbose_print(self,"agenda")
+        self.verbose_print("agenda")
         ##########VERBOSE##########
         self.check_if_valid()
         #begin en einde week
@@ -244,7 +244,7 @@ class schoolware:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
                 self.rooster.append(agenda)
         ##########VERBOSE##########
-        self.verbose_end(self,"agenda")
+        self.verbose_end("agenda")
         ##########VERBOSE##########
         return self.filter_rooster(self.rooster, datum)
 
@@ -259,7 +259,7 @@ class schoolware:
             list: Filters agenda points for a given date and points
         """
         ##########VERBOSE##########
-        self.verbose_print(self,"filter_agenda")
+        self.verbose_print("filter_agenda")
         ##########VERBOSE##########
         today = []
         if(datum == ""):
@@ -298,7 +298,7 @@ class schoolware:
                 else:
                     today_filterd.append(agenda)
         ##########VERBOSE##########
-        self.verbose_end(self,"filter-agenda")
+        self.verbose_end("filter-agenda")
         ##########VERBOSE##########
 
         return today_filterd
