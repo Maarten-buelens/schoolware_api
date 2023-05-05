@@ -53,7 +53,7 @@ class schoolware:
         self.rooster = []
         self.todo_list = []
         self.scores = []
-	verbose_print(self , message="starting schoolware_api",level="info")        
+        verbose_print(self , message="starting schoolware_api",level="info")        
         if(self.verbose):
             print("getting startup token")
         self.check_if_valid()
