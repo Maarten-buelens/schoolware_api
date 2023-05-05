@@ -4,6 +4,8 @@ from playwright.sync_api import sync_playwright
 import time
 from termcolor import colored
 import threading
+import logging
+
 class schoolware:
 
     def __init__(self, config) -> None:
@@ -19,6 +21,7 @@ class schoolware:
         | chat_id | id to send messages to
         | verbose | show a lot more info
         """
+        verbose_print(message="starting schoolware_api",level="info")
         self.config = config
         if("debug" in config):
             self.verbose = config["debug"]
@@ -335,16 +338,15 @@ def telegram_def(self):
         num_now = len(scores_now)
         if(num_prev < num_now):
             diff_list = [i for i in scores_now if i not in scores_prev]
-            diff = num_now - num_prev
+            diff = len(diff_list)
             num_prev = num_now
             scores_prev = scores_now
             
             msg = f"{diff} New points for:\n"
             for item in diff_list:
                 msg = msg + f"{item['vak']}\n"
-            verbose_print(message=f"telegram send msg msg={msg}")
+            verbose_print(message=f"telegram send msg msg={msg}", level="info")
             asyncio.run(telegram_send_msg(self, msg))
-            verbose_end(message="telegram send")
 
 async def telegram_send_msg(self, msg):
     """Function to send a telegram message to a set message-id
@@ -356,17 +358,18 @@ async def telegram_send_msg(self, msg):
         await self.bot.send_message(text=msg, chat_id=self.config["chat_id"])
 
 ##########VERBOSE##########
-def verbose_print(self,message):
+def verbose_print(self,message, level="debug"):
     """To print a message when verbose is set also times function
 
     Args:
         message (string): name of function to display
     """
     if(self.verbose):
-        print(colored("#"*50, "grey"))
-        self.start_time = time.time()
-        print(colored(f"• starting {message}", "green"))
-        print(colored("#"*50, "grey"))
+        logging.debug(f"starting {message}")
+
+    if(level == "info"):
+        logging.info(f"{message}")
+
 def verbose_end(self,message):
     """Ends verbose_print with done and the time for the function
 
@@ -374,8 +377,6 @@ def verbose_end(self,message):
         message (string): name of function to display
     """
     if(self.verbose):
-        print(colored("#"*50, "grey"))
-        end_time = time.time()
-        print(colored(f"• Done {message} time:{end_time - self.start_time}", "green"))
-        print(colored("#"*50, "grey"))
+        logging.debug(f"Done {message}")
+
 ##########VERBOSE##########
