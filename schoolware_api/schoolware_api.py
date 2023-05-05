@@ -312,79 +312,86 @@ class schoolware:
         import asyncio
         asyncio.run(telegram_send_msg(self, msg))
 
-##########OTHER##########
+    ##########OTHER##########
 
-#bg procces
-def bg(self):
-    """Function to keep token valid
-    """
-    from time import sleep
-    if(self.verbose):
-        print(colored("background procces started","blue"))
-    while True:
-        sleep(5*60)
+    #bg procces
+    def bg(self):
+        """Function to keep token valid
+        """
+        from time import sleep
         if(self.verbose):
-            print(colored("background task: checking token","blue"))
-        self.check_if_valid()
-#telegram bot
-def telegram_def(self):
-    """The setup function for Telegram
-    """
-    import telegram
-    from time import sleep
-    import asyncio
-    
-    self.bot = telegram.Bot(self.config["bot_token"])
-    print(colored("telegram started","blue"))
-    num_prev = len(self.scores)
-    scores_prev = self.scores
-    while True:
-        sleep(5*60)
+            print(colored("background procces started","blue"))
+        while True:
+            sleep(5*60)
+            if(self.verbose):
+                print(colored("background task: checking token","blue"))
+            self.check_if_valid()
+    #telegram bot
+    def telegram_def(self):
+        """The setup function for Telegram
+        """
+        import telegram
+        from time import sleep
+        
+        
+        self.bot = telegram.Bot(self.config["bot_token"])
+        
+        self.num_prev = len(self.scores)
+        self.scores_prev = self.scores
+        while True:
+            sleep(5*60)
+            if(self.verbose):
+                verbose_print(message=f"telegram checking")
+            telegram_point_diff(self)
+
+
+
+    def telegram_point_diff(self):
+
+            import asyncio
+            scores_now = self.punten()
+            num_now = len(scores_now)
+            if(self.num_prev < num_now):
+                diff_list = [i for i in scores_now if i not in self.scores_prev]
+                diff = len(diff_list)
+                self.num_prev = num_now
+                self.scores_prev = scores_now
+                
+                msg = f"{diff} New points for:\n"
+                for item in diff_list:
+                    msg = msg + f"{item['vak']}\n"
+                verbose_print(message=f"telegram send msg msg={msg}", level=1)
+                asyncio.run(telegram_send_msg(self, msg))
+
+    async def telegram_send_msg(self, msg):
+        """Function to send a telegram message to a set message-id
+
+        Args:
+            msg (string): the message to send in telegram msg
+        """
+        async with self.bot:
+            await self.bot.send_message(text=msg, chat_id=self.config["chat_id"])
+
+    ##########VERBOSE##########
+    def verbose_print(self,message, level=0):
+        """To print a message when verbose is set also times function
+
+        Args:
+            message (string): name of function to display
+        """
         if(self.verbose):
-            verbose_print(message=f"telegram checking", level="debug")
-        scores_now = self.punten()
-        num_now = len(scores_now)
-        if(num_prev < num_now):
-            diff_list = [i for i in scores_now if i not in scores_prev]
-            diff = len(diff_list)
-            num_prev = num_now
-            scores_prev = scores_now
-            
-            msg = f"{diff} New points for:\n"
-            for item in diff_list:
-                msg = msg + f"{item['vak']}\n"
-            verbose_print(message=f"telegram send msg msg={msg}", level="info")
-            asyncio.run(telegram_send_msg(self, msg))
+            logging.debug(f"starting {message}")
 
-async def telegram_send_msg(self, msg):
-    """Function to send a telegram message to a set message-id
+        if(level == 1):
+            logging.info(f"{message}")
 
-    Args:
-        msg (string): the message to send in telegram msg
-    """
-    async with self.bot:
-        await self.bot.send_message(text=msg, chat_id=self.config["chat_id"])
+    def verbose_end(self,message):
+        """Ends verbose_print with done and the time for the function
 
-##########VERBOSE##########
-def verbose_print(self,message, level=0):
-    """To print a message when verbose is set also times function
+        Args:
+            message (string): name of function to display
+        """
+        if(self.verbose):
+            logging.debug(f"Done {message}")
 
-    Args:
-        message (string): name of function to display
-    """
-    if(self.verbose):
-        logging.debug(f"starting {message}")
-
-    if(level == 1):
-        logging.info(f"{message}")
-
-def verbose_end(self,message):
-    """Ends verbose_print with done and the time for the function
-
-    Args:
-        message (string): name of function to display
-    """
-    if(self.verbose):
-        logging.debug(f"Done {message}")
-
-##########VERBOSE##########
+    ##########VERBOSE##########
