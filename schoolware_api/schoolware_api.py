@@ -1,8 +1,6 @@
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
-import time
-from termcolor import colored
 import threading
 import logging
 
@@ -19,24 +17,29 @@ class schoolware:
         | bg | background procces to keep token valid
         | bot_token | telegram bot token to enable telegram bot
         | chat_id | id to send messages to
-        | verbose | show a lot more info
+        | verbose | show a some more info
+        | debug | show a lot more info
         """
 
         
         self.config = config
         if("debug" in config):
-            self.verbose = config["debug"]
+            self.debug = config["debug"]
+            if(self.debug):
+                logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.DEBUG)
         else:
-            self.verbose = False
+            self.debug = False
+
         if("verbose" in config):
             self.verbose = config["verbose"]
             if(self.verbose):
-                logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.DEBUG)
-            else:
                 logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.INFO)
+            else:
+                logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.WARNING)
         else:
             self.verbose = False
-            logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.INFO)
+            logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.WARNING)
+
         if("bg" in config):
             self.bg = config["bg"]
         else:
@@ -44,9 +47,8 @@ class schoolware:
         
         if(self.bg):
             self.bg_p = threading.Thread(target=self.bg_funtion, args=(0,))
-            print("start bg")
             self.bg_p.start()
-            print("bg started")
+
 
 
             
@@ -59,8 +61,7 @@ class schoolware:
         self.todo_list = []
         self.scores = []
         self.verbose_print(message="starting schoolware_api",level=1)        
-        if(self.verbose):
-            print("getting startup token")
+        self.verbose_print(message="getting startup token")   
         self.check_if_valid()
         self.num_points = len(self.punten())
         self.scores_prev = self.scores
@@ -322,12 +323,11 @@ class schoolware:
         """Function to keep token valid
         """
         from time import sleep
-        if(self.verbose):
-            print(colored("background procces started","blue"))
+        self.verbose_print(message="background procces started")  
+
         while True:
             sleep(5*60)
-            if(self.verbose):
-                print(colored("background task: checking token","blue"))
+            self.verbose_print(message="background task: checking token")  
             self.check_if_valid()
     #telegram bot
     def telegram_def(self, none):
@@ -344,7 +344,7 @@ class schoolware:
                     self.verbose_print(message=f"telegram checking")
                 self.telegram_point_diff()
             except:
-                pass
+                logging.warning(f"error in telegram loop")
 
 
 

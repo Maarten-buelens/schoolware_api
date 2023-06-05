@@ -19,7 +19,8 @@ An api for schoolware written in python
 | bg | background procces to keep token valid
 | bot_token | telegram bot token to enable telegram bot
 | chat_id | id to send messages to
-| verbose | show a lot more info
+| verbose | show a some more info
+| debug | show a some more info
 
 ## Install
 * `pip3 install schoolware_api --upgrade `
