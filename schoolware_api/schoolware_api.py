@@ -48,9 +48,7 @@ class schoolware:
             self.bg_p.start()
             print("bg started")
 
-        if("bot_token" in config):
-            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
-            self.telegram_bg.start()
+
             
         self.domain = self.config["domain"]
         self.user = self.config["user"]
@@ -66,6 +64,10 @@ class schoolware:
         self.check_if_valid()
         self.num_points = len(self.punten())
         self.scores_prev = self.scores
+
+        if("bot_token" in config):
+            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
+            self.telegram_bg.start()
         
 #Token&cookie stuff
     def get_new_token(self):
@@ -333,10 +335,6 @@ class schoolware:
         """
         
         from time import sleep
-        
-        
-        
-        
         self.num_prev = len(self.punten())
         self.scores_prev = self.scores
         while True:
