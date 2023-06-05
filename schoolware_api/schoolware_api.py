@@ -331,7 +331,7 @@ class schoolware:
     def telegram_def(self, none):
         """The setup function for Telegram
         """
-        import telegram
+        
         from time import sleep
         
         
@@ -353,6 +353,7 @@ class schoolware:
     def telegram_point_diff(self):
 
             import asyncio
+            import telegram
             scores_now = self.punten()
             num_now = len(scores_now)
             if(self.num_prev < num_now):
