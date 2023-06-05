@@ -335,15 +335,18 @@ class schoolware:
         from time import sleep
         
         
-        self.bot = telegram.Bot(self.config["bot_token"])
+        
         
         self.num_prev = len(self.scores)
         self.scores_prev = self.scores
         while True:
             sleep(5*60)
-            if(self.verbose):
-                self.verbose_print(message=f"telegram checking")
-            self.telegram_point_diff()
+            try:
+                if(self.verbose):
+                    self.verbose_print(message=f"telegram checking")
+                self.telegram_point_diff()
+            except:
+                pass
 
 
 
@@ -353,16 +356,19 @@ class schoolware:
             scores_now = self.punten()
             num_now = len(scores_now)
             if(self.num_prev < num_now):
-                diff_list = [i for i in scores_now if i not in self.scores_prev]
-                diff = len(diff_list)
-                self.num_prev = num_now
-                self.scores_prev = scores_now
                 
-                msg = f"{diff} New points for:\n"
-                for item in diff_list:
-                    msg = msg + f"{item['vak']}\n"
-                self.verbose_print(message=f"telegram send msg msg={msg}", level=1)
-                asyncio.run(self.telegram_send_msg(msg))
+                    diff_list = [i for i in scores_now if i not in self.scores_prev]
+                    diff = len(diff_list)
+                    self.num_prev = num_now
+                    self.scores_prev = scores_now
+                    
+                    msg = f"{diff} New points for:\n"
+                    for item in diff_list:
+                        msg = msg + f"{item['vak']}\n"
+                    self.verbose_print(message=f"telegram send msg msg={msg}", level=1)
+                    self.bot = telegram.Bot(self.config["bot_token"])
+                    asyncio.run(self.telegram_send_msg(msg))
+
 
     async def telegram_send_msg(self, msg):
         """Function to send a telegram message to a set message-id
