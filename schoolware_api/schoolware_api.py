@@ -236,13 +236,9 @@ class schoolware:
         day = str(date.today())
         dt = datetime.strptime(day, '%Y-%m-%d')
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
-        if(self.verbose):
-            print(colored("#"*50, "grey"))
-            print(f"start date: {start}")
-            print(colored("#"*50, "grey"))
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
         ####
-        agenda_data = requests.get(f"https://kov.schoolware.be/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}", cookies=self.cookie).json()["data"]
+        agenda_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}", cookies=self.cookie).json()["data"]
         self.rooster = []
         for agenda in agenda_data:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
