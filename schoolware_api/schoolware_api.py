@@ -337,7 +337,7 @@ class schoolware:
         
         
         
-        self.num_prev = len(self.scores)
+        self.num_prev = len(self.punten())
         self.scores_prev = self.scores
         while True:
             sleep(5*60)
