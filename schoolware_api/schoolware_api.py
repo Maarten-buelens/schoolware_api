@@ -43,7 +43,7 @@ class schoolware:
             self.bg = False
         
         if(self.bg):
-            self.bg_p = threading.Thread(target=self.bg, args=(0,))
+            self.bg_p = threading.Thread(target=self.bg_funtion, args=(0,))
             print("start bg")
             self.bg_p.start()
             print("bg started")
@@ -318,7 +318,7 @@ class schoolware:
     ##########OTHER##########
 
     #bg procces
-    def bg(self, none):
+    def bg_funtion(self, none):
         """Function to keep token valid
         """
         from time import sleep
