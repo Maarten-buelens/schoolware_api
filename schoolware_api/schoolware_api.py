@@ -199,6 +199,11 @@ class schoolware:
                 else:
                     soort = "taak"
 
+                try:
+                    cat = punt["BeoordelingMomentCategorieOmschrijving"]
+                except:
+                    cat = None
+
                 self.scores.append({
                     "soort": soort,
                     "vak": vak,
@@ -211,6 +216,7 @@ class schoolware:
                     "pub_datum": publicatie_datum,
                     "day": day,
                     "pub_day": pub_day,
+                    "cat": cat
                 })
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
