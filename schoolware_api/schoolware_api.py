@@ -49,24 +49,25 @@ class schoolware:
             self.bg_p = threading.Thread(target=self.bg_funtion, args=(0,))
             self.bg_p.start()
 
+        if("schoolware_login" in config):
+            self.schoolware_login = config["schoolware_login"]
+        else:
+            self.schoolware_login = False
 
-
-            
         self.domain = self.config["domain"]
         self.user = self.config["user"]
         self.password = self.config["password"]
+        
         self.token = ""
         self.cookie = ""
         self.rooster = []
         self.todo_list = []
         self.scores = []
         self.verbose_print(message="starting schoolware_api",level=1)        
-        self.verbose_print(message="getting startup token")   
-        self.check_if_valid()
-        self.num_points = len(self.punten())
-        self.scores_prev = self.scores
 
         if("bot_token" in config):
+            self.num_points = len(self.punten())
+            self.scores_prev = self.scores
             self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
             self.telegram_bg.start()
         
@@ -96,6 +97,22 @@ class schoolware:
             ##########VERBOSE##########
             return self.token
     
+    def get_new_token_schoolware(self):
+        ##########VERBOSE##########
+        self.verbose_print("get_token_schoolware")
+        ##########VERBOSE##########
+        url = f"https://{self.domain}/webleerling/bin/server.fcgi/RPC/ROUTER/"
+        payload = "{action: \"WisaUserAPI\", method: \"Authenticate\", data: [\""+self.user+"\",\""+self.password+"\"], type: \"rpc\", tid: 1}"
+        r = requests.request("POST", url, data=payload)
+        self.cookie = requests.utils.dict_from_cookiejar(r.cookies)
+        self.token = self.cookie["FPWebSession"]
+        ##########VERBOSE##########
+        self.verbose_end("get_token_schoolware")
+        ##########VERBOSE##########
+        return self.token
+
+
+
     def check_if_valid(self):
         ##########VERBOSE##########
         self.verbose_print("check_token")
@@ -109,7 +126,12 @@ class schoolware:
                 ##########VERBOSE##########
                 self.verbose_end("check_token invalid")
                 ##########VERBOSE##########
-                self.get_new_token()
+                if(not self.schoolware_login):
+                    self.verbose_end("Using Microsoft login")
+                    self.get_new_token()
+                else:
+                    self.verbose_end("Using Schoolware login")
+                    self.get_new_token_schoolware()
             else:
                 self.verbose_end(f"check_token error {r.status_code}")
                 raise "error with token"
@@ -173,51 +195,61 @@ class schoolware:
         self.verbose_print("punten")
         ##########VERBOSE##########
         self.check_if_valid()
-        punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?&Leerling=15201&?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie).json()["data"]
+        punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie)
+        punten_data = punten_data.json()["data"]
         self.scores = []
         for vak in punten_data:
 
             for punt in vak["Beoordelingen"]:
-                vak = punt["IngerichtVakNaamgebruiker"]
-                DW = punt["DagelijksWerkCode"]
-                totale_score = float(punt["BeoordelingMomentNoemer"])
-                gewenste_score = float(punt["BeoordelingMomentGewenstAsString"])
                 try:
-                    behaalde_score = float(punt["BeoordelingWaarde"]["NumeriekAsString"])
+                    vak = punt["IngerichtVakNaamgebruiker"]
+                    try:
+                        DW = punt["DagelijksWerkCode"]
+                        EX = None
+                    except:
+                        DW = None
+                        EX = punt["ExamenCode"]
+                    totale_score = float(punt["BeoordelingMomentNoemer"])
+                    gewenste_score = float(punt["BeoordelingMomentGewenstAsString"])
+                    try:
+                        behaalde_score = float(punt["BeoordelingWaarde"]["NumeriekAsString"])
+                    except:
+                        behaalde_score = "n/a"
+                    publicatie_datum = punt["BeoordelingMomentPublicatieDatum"]
+                    datum = punt["BeoordelingMomentDatum"]
+                    titel = punt["BeoordelingMomentOmschrijving"]
+                    dt = datetime.strptime(punt["BeoordelingMomentDatum"].split(' ')[0], '%Y-%m-%d')
+                    day = dt.strftime('%A')
+
+                    pub_dt = datetime.strptime(punt["BeoordelingMomentPublicatieDatum"].split(' ')[0], '%Y-%m-%d')
+                    pub_day = pub_dt.strftime('%A')
+                    if(punt["BeoordelingMomentType_"] == "bmtToets"):
+                        soort = "toets"
+                    else:
+                        soort = "taak"
+
+                    try:
+                        cat = punt["BeoordelingMomentCategorieOmschrijving"]
+                    except:
+                        cat = None
+
+                    self.scores.append({
+                        "soort": soort,
+                        "vak": vak,
+                        "titel": titel,
+                        "DW": DW,
+                        "EX": EX,
+                        "tot_sc": totale_score,
+                        "gew_sc": gewenste_score,
+                        "score": behaalde_score,
+                        "datum": datum,
+                        "pub_datum": publicatie_datum,
+                        "day": day,
+                        "pub_day": pub_day,
+                        "cat": cat
+                    })
                 except:
-                    behaalde_score = "n/a"
-                publicatie_datum = punt["BeoordelingMomentPublicatieDatum"]
-                datum = punt["BeoordelingMomentDatum"]
-                titel = punt["BeoordelingMomentOmschrijving"]
-                dt = datetime.strptime(punt["BeoordelingMomentDatum"].split(' ')[0], '%Y-%m-%d')
-                day = dt.strftime('%A')
-
-                pub_dt = datetime.strptime(punt["BeoordelingMomentPublicatieDatum"].split(' ')[0], '%Y-%m-%d')
-                pub_day = pub_dt.strftime('%A')
-                if(punt["BeoordelingMomentType_"] == "bmtToets"):
-                    soort = "toets"
-                else:
-                    soort = "taak"
-
-                try:
-                    cat = punt["BeoordelingMomentCategorieOmschrijving"]
-                except:
-                    cat = None
-
-                self.scores.append({
-                    "soort": soort,
-                    "vak": vak,
-                    "titel": titel,
-                    "DW": DW,
-                    "tot_sc": totale_score,
-                    "gew_sc": gewenste_score,
-                    "score": behaalde_score,
-                    "datum": datum,
-                    "pub_datum": publicatie_datum,
-                    "day": day,
-                    "pub_day": pub_day,
-                    "cat": cat
-                })
+                    pass
         self.scores.sort(key=lambda x: datetime.strptime(x['datum'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         ##########VERBOSE##########
         self.verbose_end("punten")

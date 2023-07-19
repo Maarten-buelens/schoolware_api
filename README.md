@@ -7,8 +7,7 @@ An api for schoolware written in python
 * get scores
 * get todo items
 * send telegram message for new scores
-
-### only microsoft login supported for now
+* support for microsoft and schoolware login
 
 ## Config
 | Key | Description |
@@ -16,6 +15,7 @@ An api for schoolware written in python
 | domain | domain name of schoolware
 | user | school microsoft email
 | password | school microsoft password
+| schoolware_login | set true if using schoolware login
 | bg | background procces to keep token valid
 | bot_token | telegram bot token to enable telegram bot
 | chat_id | id to send messages to
@@ -27,7 +27,7 @@ An api for schoolware written in python
 * `playwright install &&  playwright install-deps`
 
 ## optional
-* `pip3 install python-telegram-bot`
+* `pip3 install python-telegram-bot` needed for telegram
 
 ## Simple example
 
@@ -46,7 +46,7 @@ print(Schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points fo
 ## Complete example
 ```python
 from schoolware_api import schoolware
-config = {"domain":"","password":"","user":"","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
+config = {"domain":"","password":"","user":"","schoolware_login": "false","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
 
 Schoolware = schoolware(config)
 
