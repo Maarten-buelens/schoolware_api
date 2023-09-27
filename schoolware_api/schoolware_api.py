@@ -308,12 +308,14 @@ class schoolware:
                 vak = agenda['VakNaam']
                 lokaal = agenda['LokaalCode']
                 titel = agenda['Titel']
+                commentaar = agenda[""]
                 uur = agenda['Van'].split(' ')[1]
 
                 today.append({
                     "vak": vak,
                     "lokaal": lokaal,
                     "titel": titel,
+                    "commentaar": commentaar,
                     "uur": uur,
                     "skip": False,
                 })
