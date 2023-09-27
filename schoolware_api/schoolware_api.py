@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
 import threading
 import logging
+import json
 
 class schoolware:
 
@@ -309,6 +310,10 @@ class schoolware:
                 lokaal = agenda['LokaalCode']
                 titel = agenda['Titel']
                 commentaar = agenda["Commentaar"]
+                if(commentaar != ""):
+                    commentaar = json.loads(commentaar)    
+                    commentaar = commentaar["leerlingen"]
+                    
                 uur = agenda['Van'].split(' ')[1]
 
                 today.append({
