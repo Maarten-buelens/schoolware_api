@@ -273,7 +273,10 @@ class schoolware:
         self.check_if_valid()
         #begin en einde week
         day = str(date.today())
-        dt = datetime.strptime(day, '%Y-%m-%d')
+        if(datum == ""):
+            dt = datetime.strptime(day, '%Y-%m-%d')
+        else:
+            dt = datetime.strptime(datum, '%Y-%m-%d HH:mm:ss')
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
         ####
