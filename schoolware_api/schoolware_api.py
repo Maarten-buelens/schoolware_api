@@ -1,3 +1,4 @@
+from tabnanny import verbose
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
@@ -276,7 +277,8 @@ class schoolware:
         if(datum == ""):
             dt = datetime.strptime(day, '%Y-%m-%d')
         else:
-            dt = datetime.strptime(datum, '%Y-%m-%d HH:mm:ss')
+            datum = str(datum).split(' ')[0]
+            dt = datetime.strptime(datum, '%Y-%m-%d')
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
         ####
