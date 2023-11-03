@@ -16,7 +16,6 @@ An api for schoolware written in python
 | user | school microsoft email
 | password | school microsoft password
 | schoolware_login | set true if using schoolware login
-| bg | background procces to keep token valid
 | bot_token | telegram bot token to enable telegram bot
 | chat_id | id to send messages to
 | verbose | show a some more info
