@@ -18,12 +18,12 @@ An api for schoolware written in python
 | schoolware_login | set true if using schoolware login
 | bot_token | telegram bot token to enable telegram bot
 | chat_id | id to send messages to
-| verbose | show a some more info
-| debug | show a some more info
+| verbose | show some more info
+| debug | show even more info
 
 ## Install
 * `pip3 install schoolware_api --upgrade `
-* `playwright install &&  playwright install-deps`
+* `playwright install &&  playwright install-deps` only for microsoft login 
 
 ## optional
 * `pip3 install python-telegram-bot` needed for telegram
