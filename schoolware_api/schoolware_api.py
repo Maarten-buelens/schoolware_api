@@ -1,8 +1,10 @@
+from tabnanny import verbose
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
 import threading
 import logging
+import json
 
 class schoolware:
 
@@ -105,15 +107,8 @@ class schoolware:
         ##########VERBOSE##########
         return self.token
 
-
-
-    def check_if_valid(self):
-        ##########VERBOSE##########
-        self.verbose_print("check_token")
-        ##########VERBOSE##########
-
-        r = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/myschoolwareaccount", cookies=self.cookie)
-
+    def make_request(self,url):
+        r = requests.get(url, cookies=self.cookie)
 
         if (r.status_code != 200):
             if(r.status_code == 401):
@@ -123,9 +118,11 @@ class schoolware:
                 if(not self.schoolware_login):
                     self.verbose_end("Using Microsoft login")
                     self.get_new_token()
+                    r = requests.get(url, cookies=self.cookie)
                 else:
                     self.verbose_end("Using Schoolware login")
                     self.get_new_token_schoolware()
+                    r = requests.get(url, cookies=self.cookie)
             else:
                 self.verbose_end(f"check_token error {r.status_code}")
                 raise "error with token"
@@ -133,7 +130,9 @@ class schoolware:
             ##########VERBOSE##########
             self.verbose_end("check_token")
             ##########VERBOSE##########
-            return True
+        return r
+
+
 
 #todo
     def todo(self):
@@ -146,8 +145,7 @@ class schoolware:
         self.verbose_print("todo")
         ##########VERBOSE##########
 
-        self.check_if_valid()
-        task_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true", cookies=self.cookie).json()["data"]
+        task_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true").json()["data"]
         self.todo_list = []
 
         for taak in task_data:
@@ -188,8 +186,8 @@ class schoolware:
         ##########VERBOSE##########
         self.verbose_print("punten")
         ##########VERBOSE##########
-        self.check_if_valid()
-        punten_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?BeoordelingMomentVan=1990-09-01+00:00:00", cookies=self.cookie)
+
+        punten_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/PuntenbladGridLeerling?BeoordelingMomentVan=1990-09-01+00:00:00")
         punten_data = punten_data.json()["data"]
         self.scores = []
         for vak in punten_data:
@@ -263,14 +261,17 @@ class schoolware:
         ##########VERBOSE##########
         self.verbose_print("agenda")
         ##########VERBOSE##########
-        self.check_if_valid()
         #begin en einde week
         day = str(date.today())
-        dt = datetime.strptime(day, '%Y-%m-%d')
+        if(datum == ""):
+            dt = datetime.strptime(day, '%Y-%m-%d')
+        else:
+            datum = str(datum).split(' ')[0]
+            dt = datetime.strptime(datum, '%Y-%m-%d')
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
-        end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=6)).strftime('%Y-%m-%d')
+        end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=1)).strftime('%Y-%m-%d')
         ####
-        agenda_data = requests.get(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}", cookies=self.cookie).json()["data"]
+        agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}").json()["data"]
         self.rooster = []
         for agenda in agenda_data:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
@@ -302,12 +303,18 @@ class schoolware:
                 vak = agenda['VakNaam']
                 lokaal = agenda['LokaalCode']
                 titel = agenda['Titel']
+                commentaar = agenda["Commentaar"]
+                if(commentaar != ""):
+                    commentaar = json.loads(commentaar)    
+                    commentaar = commentaar["leerlingen"]
+                    
                 uur = agenda['Van'].split(' ')[1]
 
                 today.append({
                     "vak": vak,
                     "lokaal": lokaal,
                     "titel": titel,
+                    "commentaar": commentaar,
                     "uur": uur,
                     "skip": False,
                 })
