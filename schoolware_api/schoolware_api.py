@@ -14,7 +14,6 @@ class schoolware:
         | domain | domain name of schoolware
         | user | school microsoft email
         | password | school microsoft password
-        | bg | background procces to keep token valid
         | bot_token | telegram bot token to enable telegram bot
         | chat_id | id to send messages to
         | verbose | show a some more info
@@ -40,20 +39,15 @@ class schoolware:
             self.verbose = False
             logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.WARNING)
 
-        if("bg" in config):
-            self.bg = config["bg"]
-        else:
-            self.bg = False
-        
-        if(self.bg):
-            self.bg_p = threading.Thread(target=self.bg_funtion, args=(0,))
-            self.bg_p.start()
-
         if("schoolware_login" in config):
             self.schoolware_login = config["schoolware_login"]
         else:
             self.schoolware_login = False
 
+        if("telegram_msg" in config):
+            self.telegram_msg = config["telegram_msg"]
+        else:
+            self.telegram_msg = ""
         self.domain = self.config["domain"]
         self.user = self.config["user"]
         self.password = self.config["password"]
@@ -68,7 +62,7 @@ class schoolware:
         if("bot_token" in config):
             self.num_points = len(self.punten())
             self.scores_prev = self.scores
-            self.telegram_bg = threading.Thread(target=self.telegram_def, args=(0,))
+            self.telegram_bg = threading.Thread(target=self.telegram_setup, args=(0,))
             self.telegram_bg.start()
         
 #Token&cookie stuff
@@ -341,65 +335,46 @@ class schoolware:
 
         return today_filterd
     
-    def telegram_manual_send(self, msg):
-        """Manualy send a telegram message
-
-        Args:
-            msg (String): Message to send
-        """
-        import asyncio
-        asyncio.run(self.telegram_send_msg(msg))
-
     ##########OTHER##########
 
-    #bg procces
-    def bg_funtion(self, none):
-        """Function to keep token valid
-        """
-        from time import sleep
-        self.verbose_print(message="background procces started")  
-
-        while True:
-            sleep(5*60)
-            self.verbose_print(message="background task: checking token")  
-            self.check_if_valid()
     #telegram bot
-    def telegram_def(self, none):
+    def telegram_setup(self, none):
         """The setup function for Telegram
         """
-        
+        import telegram
         from time import sleep
-        self.num_prev = len(self.punten())
-        self.scores_prev = self.scores
+        self.bot = telegram.Bot(self.config["bot_token"])
+        self.prev_scores = self.scores
         while True:
             sleep(5*60)
             try:
                 if(self.verbose):
                     self.verbose_print(message=f"telegram checking")
+                
                 self.telegram_point_diff()
             except:
                 logging.warning(f"error in telegram loop")
 
-
-
     def telegram_point_diff(self):
-
             import asyncio
-            import telegram
-            scores_now = self.punten()
-            num_now = len(scores_now)
-            if(self.num_prev < num_now):
+
+            new_scores = self.punten()
+
+
+            if(len(self.prev_scores) < len(new_scores)):
                 
-                    diff_list = [i for i in scores_now if i not in self.scores_prev]
+                    diff_list = [i for i in new_scores if i not in self.prev_scores]
                     diff = len(diff_list)
-                    self.num_prev = num_now
-                    self.scores_prev = scores_now
+                    self.prev_scores = new_scores
                     
-                    msg = f"{diff} New points for:\n"
-                    for item in diff_list:
-                        msg = msg + f"{item['vak']}\n"
+                    if(self.telegram_msg == ""):
+                        msg = f"{diff} New points:\n"
+                        for item in diff_list:
+                            msg = msg + f"{item['vak']} {item['titel']}: {float(item['score']) * float(item['tot_sc']) if item['score'] != 'n/a' else 'n/a'}/{item['tot_sc']}\n"
+                    else:
+                        eval(self.telegram_msg)
+
                     self.verbose_print(message=f"telegram send msg msg={msg}", level=1)
-                    self.bot = telegram.Bot(self.config["bot_token"])
                     asyncio.run(self.telegram_send_msg(msg))
 
 
