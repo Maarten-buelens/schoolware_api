@@ -62,8 +62,7 @@ class schoolware:
         self.verbose_print(message="starting schoolware_api",level=1)        
 
         if("bot_token" in config):
-            self.num_points = len(self.punten())
-            self.scores_prev = self.scores
+            self.prev_scores = self.punten()
             self.telegram_bg = threading.Thread(target=self.telegram_setup, args=(0,))
             self.telegram_bg.start()
         
