@@ -5,7 +5,7 @@ setup(
     version='1.9.0',
     description='a schoolware api made in python',
     author='Maarten Buelens',
-    license='MIT',
+    license='dynamic',
     install_requires=['requests>=2.25.1', 'playwright>=1.31.1'],
     author_email='schoolware_api@mb-server.com',
 )
