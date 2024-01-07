@@ -1,4 +1,3 @@
-from tabnanny import verbose
 import requests
 from datetime import date, datetime, timedelta
 from playwright.sync_api import sync_playwright
@@ -105,6 +104,11 @@ class schoolware:
         self.verbose_end("get_token_schoolware")
         ##########VERBOSE##########
         return self.token
+
+    def get_token(self):
+        self.make_request("https://{self.domain}/webleerling/bin/server.fcgi/REST/myschoolwareaccount")
+        return self.token
+
 
     def make_request(self,url):
         r = requests.get(url, cookies=self.cookie)
@@ -270,7 +274,7 @@ class schoolware:
         start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
         end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=1)).strftime('%Y-%m-%d')
         ####
-        agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_MaxVan={end}&MinTot={start}").json()["data"]
+        agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?MaxVan={end}&MinTot={start}").json()["data"]
         self.rooster = []
         for agenda in agenda_data:
             if(agenda["TypePunt"]==1 or agenda["TypePunt"]==2):
