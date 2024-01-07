@@ -297,13 +297,12 @@ class schoolware:
         #get start of week
         days_to_subtract = dt.weekday()
         start = dt - timedelta(days=days_to_subtract)
-        end = start + timedelta(days=5)
 
         for i in range(5):
-            day = start + timedelta(days=1)
+            day_week = start + timedelta(days=1)
             days.append({
-                "date": day.strftime("%m/%d"),
-                "points":self.agenda(day)
+                "date": day_week.strftime("%m/%d"),
+                "points":self.agenda(day_week)
                 })
         self.verbose_print(days)
         return days
