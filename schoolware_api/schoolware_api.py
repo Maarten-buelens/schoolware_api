@@ -301,7 +301,7 @@ class schoolware:
         for i in range(5):
             day_week = start + timedelta(days=i)
             days.append({
-                "date": day_week.strftime("%m/%d"),
+                "date": day_week.strftime("%d/%m"),
                 "points":self.agenda(day_week)
                 })
         self.verbose_print(days)
