@@ -273,8 +273,6 @@ class schoolware:
             dt = datetime.strptime(datum, '%Y-%m-%d')
         start = dt.strftime("%Y-%m-%d")
         end =  (dt + timedelta(days=1)).strftime("%Y-%m-%d")
-        logging.log(1,start)
-        logging.log(1,end)
         ####
         agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?MaxVan={end}&MinTot={start}").json()["data"]
         self.rooster = []
@@ -287,12 +285,25 @@ class schoolware:
         return self.filter_rooster(self.rooster, datum)
 
     def agenda_week(self, datum=""):
+        days = []
         day = str(date.today())
         if(datum == ""):
             dt = datetime.strptime(day, '%Y-%m-%d')
         else:
             datum = str(datum).split(' ')[0]
             dt = datetime.strptime(datum, '%Y-%m-%d')
+
+    
+        #get start of week
+        days_to_subtract = dt.weekday()
+        start = dt - timedelta(days=days_to_subtract)
+        end = start + timedelta(days=5)
+
+        for i in range(5):
+            day = start + timedelta(days=1)
+            days.append(self.agenda(day))
+        self.verbose_print(days)
+        return days
 
 
     def filter_rooster(self, rooster, datum=""):
