@@ -271,8 +271,8 @@ class schoolware:
         else:
             datum = str(datum).split(' ')[0]
             dt = datetime.strptime(datum, '%Y-%m-%d')
-        start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
-        end = ((dt - timedelta(days=dt.weekday())) + timedelta(days=7)).strftime('%Y-%m-%d')
+        start = dt.strftime("%Y-%m-%d")
+        end =  (dt + timedelta(days=1)).strftime("%Y-%m-%d")
         ####
         agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?MaxVan={end}&MinTot={start}").json()["data"]
         self.rooster = []
@@ -283,6 +283,15 @@ class schoolware:
         self.verbose_end("agenda")
         ##########VERBOSE##########
         return self.filter_rooster(self.rooster, datum)
+
+    def agenda_week(self, datum=""):
+        day = str(date.today())
+        if(datum == ""):
+            dt = datetime.strptime(day, '%Y-%m-%d')
+        else:
+            datum = str(datum).split(' ')[0]
+            dt = datetime.strptime(datum, '%Y-%m-%d')
+
 
     def filter_rooster(self, rooster, datum=""):
         """Internal function to filter a agenda rooster of a given date
