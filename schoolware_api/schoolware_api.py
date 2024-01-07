@@ -273,6 +273,8 @@ class schoolware:
             dt = datetime.strptime(datum, '%Y-%m-%d')
         start = dt.strftime("%Y-%m-%d")
         end =  (dt + timedelta(days=1)).strftime("%Y-%m-%d")
+        logging.log(1,start)
+        logging.log(1,end)
         ####
         agenda_data = self.make_request(f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?MaxVan={end}&MinTot={start}").json()["data"]
         self.rooster = []
