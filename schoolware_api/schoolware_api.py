@@ -301,7 +301,10 @@ class schoolware:
 
         for i in range(5):
             day = start + timedelta(days=1)
-            days.append(self.agenda(day))
+            days.append({
+                "date": day,
+                "points":self.agenda(day)
+                })
         self.verbose_print(days)
         return days
 
