@@ -16,10 +16,11 @@ An api for schoolware written in python
 | user | school microsoft email
 | password | school microsoft password
 | schoolware_login | set true if using schoolware login
-| bot_token | telegram bot token to enable telegram bot
-| chat_id | id to send messages to
-| verbose | show some more info
-| debug | show even more info
+| telegram_enabled | required to enable telegram
+| telegram_bot_token | telegram bot token to enable telegram bot
+| telegram_chat_id | id to send messages to
+| verbose | show a some more info, when what function is run
+| debug | show a lot more info, all networking info
 
 ## Install
 * `pip3 install schoolware_api --upgrade `
@@ -41,13 +42,6 @@ print(Schoolware.todo())  # Returns all todo items
 print(Schoolware.punten()) # Returns all scores this schoolyear
 print(Schoolware.agenda()) # Returns agenda points today
 print(Schoolware.agenda(datum="2023-03-06 00:00:00")) # Returns agenda points for 2023-03-06
+print(Schoolware.agenda_week()) # Returns whole week agenda points
 ```
-## Complete example
-```python
-from schoolware_api import schoolware
-config = {"domain":"","password":"","user":"","schoolware_login": "false","verbose": false, "bg": true, "bot_token": "", "chat_id": ""}
 
-Schoolware = schoolware(config)
-
-# same as other
-```
