@@ -21,6 +21,9 @@ class schoolware:
         | telegram_chat_id | id to send messages to
         | verbose | show a some more info, when what function is run
         | debug | show a lot more info, all networking info
+
+        | jaartotaal | Enable jaartotaal
+        |  | 
         """
         self.token = ""
         self.cookie = ""
@@ -71,7 +74,7 @@ class schoolware:
 
         if (self.telegram_enabled):
             self.prev_scores = self.punten()
-            self.telegram_setup(None)
+            self.telegram_setup()
 
 
 # Token&cookie stuff
@@ -390,14 +393,13 @@ class schoolware:
     ########## OTHER##########
 
     # telegram bot
-    def telegram_setup(self, none):
+    def telegram_setup(self):
         """The setup function for Telegram
         """
         import telegram
         
         self.bot = telegram.Bot(self.telegram_bot_token)
         telegram = threading.Thread(target=self.telegram_main)
-        telegram.setDaemon(True)
         self.verbose_print("Starting telegram",1)
         telegram.start()
 
@@ -424,6 +426,9 @@ class schoolware:
                 self.verbose_print(
                     message=f"telegram send msg msg={msg}", level=1)
                 asyncio.run(self.telegram_send_msg(msg))
+            else:
+                self.verbose_print(
+                    message=f"telegram no new points", level=0)
             sleep(5*60)
 
     async def telegram_send_msg(self, msg):
