@@ -62,7 +62,7 @@ class schoolware:
             logging.basicConfig(
                 format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.DEBUG)
 
-        if (self.verbose):
+        elif (self.verbose):
             logging.basicConfig(
                 format='[%(levelname)s] %(asctime)s - %(message)s', level=logging.INFO)
         else:
