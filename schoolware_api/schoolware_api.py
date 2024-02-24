@@ -408,27 +408,30 @@ class schoolware:
         from time import sleep
 
         while True:
-            new_scores = self.punten()
-            if (len(self.prev_scores) < len(new_scores)):
-                diff_list = [
-                    i for i in new_scores if i not in self.prev_scores]
-                diff = len(diff_list)
-                self.prev_scores = new_scores
+            try:
+                new_scores = self.punten()
+                if (len(self.prev_scores) < len(new_scores)):
+                    diff_list = [
+                        i for i in new_scores if i not in self.prev_scores]
+                    diff = len(diff_list)
+                    self.prev_scores = new_scores
 
-                if (self.telegram_msg == ""):
-                    msg = f"{diff} New points:\n"
-                    for item in diff_list:
-                        msg = msg + \
-                            f"{item['vak']} {item['titel']}: {float(item['score']) * float(item['tot_sc']) if item['score'] != 'n/a' else 'n/a'}/{item['tot_sc']}\n"
+                    if (self.telegram_msg == ""):
+                        msg = f"{diff} New points:\n"
+                        for item in diff_list:
+                            msg = msg + \
+                                f"{item['vak']} {item['titel']}: {float(item['score']) * float(item['tot_sc']) if item['score'] != 'n/a' else 'n/a'}/{item['tot_sc']}\n"
+                    else:
+                        eval(self.telegram_msg)
+
+                    self.verbose_print(
+                        message=f"telegram send msg msg={msg}", level=1)
+                    asyncio.run(self.telegram_send_msg(msg))
                 else:
-                    eval(self.telegram_msg)
-
-                self.verbose_print(
-                    message=f"telegram send msg msg={msg}", level=1)
-                asyncio.run(self.telegram_send_msg(msg))
-            else:
-                self.verbose_print(
-                    message=f"telegram no new points", level=0)
+                    self.verbose_print(
+                        message=f"telegram no new points", level=0)
+            except Exception as e:
+                logging.error(e)
             sleep(5*60)
 
     async def telegram_send_msg(self, msg):
