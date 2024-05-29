@@ -36,6 +36,7 @@ class schoolware:
 
         optional_keys = {
             'debug': False,
+            'debugMicro': False,
             'verbose': False,
             'schoolware_login': False,
 
@@ -85,13 +86,17 @@ class schoolware:
         ########## VERBOSE##########
 
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            if(self.debugMicro):
+                browser = p.chromium.launch(headless=False)
+        
+            else:
+                browser = p.chromium.launch(headless=True)
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0")
             page = context.new_page()
             page.goto(
                 f"https://{self.domain}/webleerling/start.html#!fn=llagenda")
-            page.locator('xpath=//*[@id="ext-comp-1014"]').click()
+            page.locator("#ext-comp-1014-btnEl").click()
             page.get_by_role("textbox").fill(self.user)
             page.get_by_text("Next").click()
             page.get_by_placeholder("Password").fill(self.password)
