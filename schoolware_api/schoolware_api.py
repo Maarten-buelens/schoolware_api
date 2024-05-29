@@ -94,17 +94,21 @@ class schoolware:
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0")
             page = context.new_page()
-            page.goto(
-                f"https://{self.domain}/webleerling/start.html#!fn=llagenda")
-            page.locator("#ext-comp-1014-btnEl").click()
-            page.get_by_role("textbox").fill(self.user)
-            page.get_by_text("Next").click()
-            page.get_by_placeholder("Password").fill(self.password)
-            page.get_by_text("Sign In").click()
-            page.wait_for_load_state()
-            if (context.cookies()[0]["name"] == "FPWebSession"):
-                self.token = context.cookies()[0]["value"]
-                self.cookie = dict(FPWebSession=self.token)
+            try:
+                page.goto(
+                    f"https://{self.domain}/webleerling/start.html#!fn=llagenda")
+                page.locator("#ext-comp-1014-btnEl").click()
+                page.get_by_role("textbox").fill(self.user)
+                page.get_by_text("Next").click()
+                page.get_by_placeholder("Password").fill(self.password)
+                page.get_by_text("Sign In").click()
+                page.wait_for_load_state()
+                if (context.cookies()[0]["name"] == "FPWebSession"):
+                    self.token = context.cookies()[0]["value"]
+                    self.cookie = dict(FPWebSession=self.token)
+            except:
+                page.screenshot(path="playwright.png", full_page=True)
+                raise Exception("error when getting token, check email and password")
             browser.close()
             ########## VERBOSE##########
             self.verbose_end("get_token")
