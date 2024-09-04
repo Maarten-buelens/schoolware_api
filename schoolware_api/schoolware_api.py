@@ -174,32 +174,36 @@ class schoolware:
         ########## VERBOSE##########
 
         task_data = self.make_request(
-            f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00&IsTaakOfToets=true").json()["data"]
+            f"https://{self.domain}/webleerling/bin/server.fcgi/REST/AgendaPunt/?_dc=1665240724814&MinVan={date.today()}T00:00:00").json()["data"]
         self.todo_list = []
 
         for taak in task_data:
+            soort = "Onbekend"  # Initialize soort with a default value
             if (taak["TypePunt"] == 1000):
                 soort = "Taak"
             elif (taak["TypePunt"] == 100):
                 soort = "toets"
             elif (taak["TypePunt"] == 101):
                 soort = "hertoets"
+            elif (taak["TypePunt"] == 9):
+                soort = "Aandachtspunt"
 
-            vak = taak["VakNaam"]
-            titel = taak["Titel"]
-            onderwerp = taak["Commentaar"]
-            eind_time = taak["Tot"].split(' ')[0]
-            dt = datetime.strptime(taak["Tot"].split(' ')[0], '%Y-%m-%d')
-            day = dt.strftime('%A')
+            if soort != "Onbekend":
+                    vak = taak["VakNaam"]
+                    titel = taak["Titel"]
+                    onderwerp = taak["Commentaar"]
+                    eind_time = taak["Tot"].split(' ')[0]
+                    dt = datetime.strptime(taak["Tot"].split(' ')[0], '%Y-%m-%d')
+                    day = dt.strftime('%A')
 
-            self.todo_list.append({
-                "soort": soort,
-                "vak": vak,
-                "titel": titel,
-                "onderwerp": onderwerp,
-                "eind_time": eind_time,
-                "day": day
-            })
+                    self.todo_list.append({
+                        "soort": soort,
+                        "vak": vak,
+                        "titel": titel,
+                        "onderwerp": onderwerp,
+                        "datum": eind_time,
+                        "day": day
+                    })
         ########## VERBOSE##########
         self.verbose_end("todo")
         ########## VERBOSE##########
